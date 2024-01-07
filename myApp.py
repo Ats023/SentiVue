@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import nltk 
+nltk.download('vader_lexicon')
 
 st.title("SentiVue: A Sentiment Analysis Tool for Product Reviews")
 st.markdown("""
