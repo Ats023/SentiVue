@@ -1,8 +1,8 @@
 # SentiVue: Python NLTK Sentiment Analysis of Product Reviews
 ### App Link 👉 [SentiVue Streamlit App](https://sentivue.streamlit.app/)
-### Description:
+### ▶️ Description:
 This project was created for the application of data analytics in real-life scenarios, encompassing data preprocessing/cleaning, NLP, and data visualization. SentiVue processes a dataset comprising products and their corresponding reviews and ratings. It then generates modified tables and charts, providing valuable information about the performance of each product as well as the entire dataset, as is gathered from the textual reviews.
-### How to run:
+### ▶️ How to run:
 1. Download the 'myApp.py' and 'requirements.txt' files and save them to a folder.
 2. Create a virtual environment within the folder and activate it:
 <pre>
@@ -21,7 +21,7 @@ This project was created for the application of data analytics in real-life scen
     streamlit run myApp.py
 </pre>
 
-### How it works:
+### ▶️ How it works:
 SentiVue requires the user to upload a csv file with at least 3 required fields: 
 1. **Product title**
 2. **Review**
