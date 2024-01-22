@@ -10,33 +10,24 @@ nltk.download('vader_lexicon')
 
 st.title("SentiVue: A Sentiment Analysis Tool for Product Reviews")
 st.markdown("""
-Welcome to my streamlit app!  
+### Welcome to my streamlit app!
             
-Please ensure your datasets have a column for:  
-        1. Product name (type: string)  
-        2. Rating (type: int, range: 1-5)  
-        3. Textual review body (type: string).  
-            
-Optionally, you may use the following sample dataset for testing: [Amazon_Electronics_Dataset_Test](https://huggingface.co/datasets/rkf2778/amazon_reviews_mobile_electronics/blob/main/test.csv)
+This project was created for the application of data analytics in real-life scenarios, encompassing data preprocessing/cleaning, NLP, and data visualization. SentiVue processes a dataset comprising products and their corresponding reviews and ratings. It then generates charts providing valuable information about the performance of products as is gathered from the textual reviews. 
 """)
 
-def vaders(data, review, product, rating):
-    with st.spinner('Please wait...'):
-        df = pd.read_csv(data)
-        try:
-            df.rename(columns={review:"review",product:"product",rating:"rating"}, inplace=True)
-            df = df.head(2000)
-            df = df[['product','review','rating']]
-        except KeyError:
-            st.error("Please enter the correct field names.")
-            exit()
-        df = df.head(2000)
-        df = df[['product','review','rating']]
+st.info(""" Please ensure your dataset has a column for:  
+- Product name (string)
+- Rating (int)
+- Textual review body (string). 
         
-        #VADER SENTIMENT ANALYSIS METHOD
-        #VADER: Valence Aware Dictionary and Sentiment Reasoner
-        #Bag of words approach- stopwords are removed and each word is combined to a total score
+Optionally, you may use the following sample dataset: [Amazon-Electronics-Dataset](https://huggingface.co/datasets/rkf2778/amazon_reviews_mobile_electronics/blob/main/test.csv)
+""")
 
+st.divider()
+
+@st.cache_data
+def vaders(df):
+    with st.spinner():
         from nltk.sentiment import SentimentIntensityAnalyzer
 
         sia = SentimentIntensityAnalyzer()
@@ -74,6 +65,9 @@ def vaders(data, review, product, rating):
         grouped_res = vaders.groupby('product', as_index=False).agg({'compound':'mean','rating':'mean'})
         vaders_grouped = pd.DataFrame(grouped_res)
         vaders_grouped['entries'] = vaders.groupby('product')['product'].transform('count')
+    return vaders_grouped
+
+def vaders_grouped(vaders_grouped):
 
         st.subheader("Grouped Dataset by product names")
         option = st.selectbox(
@@ -99,6 +93,23 @@ def vaders(data, review, product, rating):
 
         st.altair_chart(chart, theme="streamlit", use_container_width=True)
 
+
+@st.cache_data
+def data_prep(data, review, product, rating):
+    with st.spinner('Please wait...'):
+        df = pd.read_csv(data)
+        try:
+            df.rename(columns={review:"review",product:"product",rating:"rating"}, inplace=True)
+            df = df.head(2000)
+            df = df[['product','review','rating']]
+        except KeyError:
+            st.error("Please enter the correct field names.")
+            exit()
+        df = df.head(2000)
+        df = df[['product','review','rating']]
+        return df
+
+# MAIN STREAMLIT APP
 data = st.file_uploader('Choose a CSV file')
 
 if data is not None:
@@ -106,6 +117,8 @@ if data is not None:
     review = st.text_input('Field name for Review Body: ', value=None)
     rating = st.text_input('Field name for Numerical Rating: ', value=None)
     if product!=None and review!=None and rating!=None:
-        vaders(data, review, product, rating)
+        df = data_prep(data, review, product, rating)
+        grouped_df = vaders(df)
+        vaders_grouped(grouped_df)
 else:
     st.warning('Must upload a file!')
